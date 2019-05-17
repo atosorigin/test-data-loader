@@ -32,19 +32,25 @@ class EntitiesScriptExecutor {
 
     private List<EntityBuilderListener> listeners = []
 
-    /**
-     * Executes a groovy script file with entity definitions provided by the passed Reader.
-     *
-     * @param reader - a Reader for the file containing the entity definitions.
-     */
-    public void execute(Reader reader) {
+    private GroovyShell shell
+
+
+    public EntitiesScriptExecutor(){
         CompilerConfiguration compilerConfiguration = new CompilerConfiguration()
         compilerConfiguration.scriptBaseClass = EntityBuilderScript.class.name
 
         Binding binding = new Binding()
         binding.builder = new EntityBuilder(this)
 
-        GroovyShell shell = new GroovyShell(this.class.classLoader, binding, compilerConfiguration)
+        shell = new GroovyShell(this.class.classLoader, binding, compilerConfiguration)
+    }
+
+    /**
+     * Executes a groovy script file with entity definitions provided by the passed Reader.
+     *
+     * @param reader - a Reader for the file containing the entity definitions.
+     */
+    public void execute(Reader reader) {
         Script script =  shell.parse(reader)
         script.run()
     }

@@ -54,6 +54,7 @@ class TestDataLoader implements EntityBuilderListener {
     private EntityManager entityManager
     private EntityDeleter entityDeleter
     private TransactionType transactionType
+    private EntitiesScriptExecutor scriptExecutor
 
     /**
      * Creates a new TestDataLoader that uses the specified JPA EntityManager to save and delete entities.
@@ -91,6 +92,12 @@ class TestDataLoader implements EntityBuilderListener {
         this.entityManager = entityManager
         entityDeleter = new EntityDeleter(entityManager)
         this.transactionType = transactionType
+
+        EntityPersister persister = new EntityPersister(entityManager)
+        scriptExecutor = new EntitiesScriptExecutor()
+                .addEntityBuilderListener(this)
+                .addEntityBuilderListener(persister)
+                .addEntityBuilderListener(entityDeleter)
     }
 
     private void checkTransactionType(EntityManager entityManager, TransactionType transactionType) {
@@ -118,15 +125,24 @@ class TestDataLoader implements EntityBuilderListener {
      * definitions. The files are expected to be UTF-8 encoded.
      */
     void loadTestData(Collection<String> entityDefinitionFiles) {
-        EntityPersister persister = new EntityPersister(entityManager)
-        EntitiesScriptExecutor scriptExecutor = new EntitiesScriptExecutor()
-                .addEntityBuilderListener(this)
-                .addEntityBuilderListener(persister)
-                .addEntityBuilderListener(entityDeleter)
-
         withTransaction {
             entityDefinitionFiles.each {
                 scriptExecutor.execute(FileReader.create(it))
+            }
+        }
+    }
+
+    /**
+     * Loads the entities defined in the passed {@code entityDefinitionFiles} into the database.
+     * Each file will run in an own transaction.
+     *
+     * @param entityDefinitionFiles {@link Collection} of Strings - the names of files containing the entity
+     * definitions. The files are expected to be UTF-8 encoded.
+     */
+    void loadTestDataSeperately(Collection<String> entityDefinitionFiles) {
+        entityDefinitionFiles.each { file ->
+            withTransaction {
+                scriptExecutor.execute(FileReader.create(file))
             }
         }
     }
