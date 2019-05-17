@@ -36,8 +36,17 @@ interface EntityBuilderListener {
      */
     void onEntityCreated(String name, Object entity)
 
+    /**
+     * Is called every time an entity is deleted.
+     *
+     * @param name the name of the entity created
+     * @param entity the created entity
+     */
     void onEntityDeleted(String name, Object entity)
 
+    /**
+     * Is called every time an commit is triggered.
+     */
     void onCommit()
 
 }

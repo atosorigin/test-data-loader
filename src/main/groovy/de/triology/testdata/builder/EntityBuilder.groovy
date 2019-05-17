@@ -55,6 +55,14 @@ class EntityBuilder {
         return entity
     }
 
+    /**
+     * Updates Instance specified by the entityName using the specified entityData definition.
+     *
+     * @param entityClass - the type defining the entity
+     * @param entityName - the name of the entity to be updated
+     * @param entityData - a Closure used to update the entity
+     * @return the updated entity
+     */
     public <T> T update(@DelegatesTo.Target Class<T> entityClass, String entityName,
             @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0) Closure entityData = {}) {
 
@@ -68,12 +76,21 @@ class EntityBuilder {
         return entity
     }
 
+    /**
+     * Deletes the Instance specified by entityName.
+     *
+     * @param entityClass - the type defining the entity
+     * @param entityName - the name to reference the entity e.g. in another call to create
+     */
     public <T> void delete(Class<T> entityClass, String entityName){
         T entity = entitiesByName[entityName]
 
         executor.fireEntityDeleted(entityName, entity)
     }
 
+    /**
+     * Commits the transaction.
+     */
     public void commit(){
         executor.fireCommit()
     }
