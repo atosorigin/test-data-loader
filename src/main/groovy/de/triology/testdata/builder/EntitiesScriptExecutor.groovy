@@ -67,5 +67,13 @@ class EntitiesScriptExecutor {
     protected void fireEntityCreated(String entityName, Object entity) {
         listeners*.onEntityCreated(entityName, entity)
     }
+
+    protected void fireEntityDeleted(String entityName, Object entity) {
+        listeners*.onEntityDeleted(entityName, entity)
+    }
+
+    protected void fireCommit(){
+        listeners*.onCommit()
+    }
 }
 

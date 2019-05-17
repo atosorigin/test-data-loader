@@ -44,4 +44,10 @@ class EntityPersister implements EntityBuilderListener {
     public void onEntityCreated(String name, Object entity) {
         entityManager.persist(entity)
     }
+
+    @Override
+    public void onEntityDeleted(String name, Object entity) {}
+
+    @Override
+    public void onCommit() {}
 }

@@ -36,4 +36,8 @@ interface EntityBuilderListener {
      */
     void onEntityCreated(String name, Object entity)
 
+    void onEntityDeleted(String name, Object entity)
+
+    void onCommit()
+
 }

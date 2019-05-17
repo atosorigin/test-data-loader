@@ -217,6 +217,17 @@ class TestDataLoader implements EntityBuilderListener {
         loadedEntities[name]=entity
     }
 
+    @Override
+    public void onEntityDeleted(String name, Object entity) {
+        loadedEntities.remove(name)
+    }
+
+    @Override
+    public void onCommit(){
+        entityManager.transaction.commit()
+        entityManager.transaction.begin()
+    }
+
     public void clear() {
         loadedEntities.clear()
     }

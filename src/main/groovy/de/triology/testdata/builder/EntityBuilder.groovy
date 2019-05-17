@@ -55,6 +55,29 @@ class EntityBuilder {
         return entity
     }
 
+    public <T> T update(@DelegatesTo.Target Class<T> entityClass, String entityName,
+            @DelegatesTo(strategy = Closure.DELEGATE_FIRST, genericTypeIndex = 0) Closure entityData = {}) {
+
+        T entity = entitiesByName[entityName]
+
+        def rehydrated = entityData.rehydrate(entity, this, this)
+        rehydrated.resolveStrategy = Closure.DELEGATE_FIRST
+        rehydrated.call()
+
+        executor.fireEntityCreated(entityName, entity)
+        return entity
+    }
+
+    public <T> void delete(Class<T> entityClass, String entityName){
+        T entity = entitiesByName[entityName]
+
+        executor.fireEntityDeleted(entityName, entity)
+    }
+
+    public void commit(){
+        executor.fireCommit()
+    }
+
     private <T> T createEntityInstance(final String entityName, final Class<T> entityClass) {
         if (entitiesByName[entityName]) {
             throw new EntityBuilderException(
